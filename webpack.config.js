@@ -1,22 +1,29 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry:path.join(__dirname,'./src/index.js'),
+  entry:path.join(__dirname,'./src/index.jsx'),
   output:{
     path:path.join(__dirname,'./dist'),
     filename: "bundle.js"
   },
+  plugins:[
+    new MiniCssExtractPlugin({
+      filename:'styles/[name].[hash:4].css',
+      chunkFilename:'styles/[id].[hash].css'
+    })
+  ],
   module:{
     rules:[
       {
-        test:/\.js$/,
+        test:/\.js[x]$/,
         use:['babel-loader'],
         include:/src/,
         exclude:/node_modules/
       },
       {
         test:/\.css$/,
-        use:['css-loader','style-loader']
+        use:[MiniCssExtractPlugin.loader,'css-loader']
       },
       {
         test:/\.(jpg|jpe?j|png|gif)$/,
@@ -52,9 +59,10 @@ module.exports = {
     ]
   },
   devServer:{
-    contentBase:path.join(__dirname, './dist'),
+    contentBase: path.join(__dirname, 'public'),
     hot:true,
-    port:3000
+    port:3000,
+    historyApiFallback: true
   }
 
 }
